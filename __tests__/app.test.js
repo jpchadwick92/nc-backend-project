@@ -74,6 +74,31 @@ describe("/api/reviews", () => {
         });
     });
   });
+  describe("PATCH", () => {
+    test("200: updates votes property and responds with updated review", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(incrementVotes)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.review).toEqual(
+            expect.objectContaining({
+              review_id: 1,
+              title: "Agricola",
+              review_body: "Farmyard fun!",
+              designer: "Uwe Rosenberg",
+              review_img_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+              votes: 11,
+              category: "euro game",
+              owner: "mallionaire",
+              created_at: "2021-01-18T10:00:20.514Z",
+            })
+          );
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {
