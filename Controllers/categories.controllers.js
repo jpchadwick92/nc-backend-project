@@ -13,7 +13,9 @@ exports.getCategories = (req, res, next) => {
 
 exports.getReviewsById = (req, res, next) => {
   const { review_id } = req.params;
-  fetchReviewsById(review_id).then((review) => {
-    res.status(200).send({ review });
-  });
+  fetchReviewsById(review_id)
+    .then((review) => {
+      res.status(200).send({ review });
+    })
+    .catch(next);
 };

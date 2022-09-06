@@ -57,5 +57,13 @@ describe("/api/reviews", () => {
           );
         });
     });
+    test("404: review does not exist", () => {
+      return request(app)
+        .get("/api/reviews/1000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("review does not exist");
+        });
+    });
   });
 });
