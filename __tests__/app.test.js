@@ -20,7 +20,7 @@ describe("/api/categories", () => {
         .expect(200)
         .then(({ body }) => {
           expect(Array.isArray(body.categories)).toBe(true);
-          expect(body.categories.length > 0).toBe(true);
+          expect(body.categories.length === 4).toBe(true);
           body.categories.forEach((category) => {
             expect(category).toEqual(
               expect.objectContaining({
