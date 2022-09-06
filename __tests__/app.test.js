@@ -98,6 +98,36 @@ describe("/api/reviews", () => {
           );
         });
     });
+    test("400: invalid value for incrementing votes", () => {
+      const invalidVotes = { inc_votes: "ten" };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(invalidVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("400: request missing inc_votes property", () => {
+      const missingVotes = {};
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(missingVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: review does not exist", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/1000")
+        .send(incrementVotes)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("review does not exist");
+        });
+    });
   });
 });
 

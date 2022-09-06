@@ -15,7 +15,8 @@ app.get("/api/users", getUsers);
 app.patch("/api/reviews/:review_id", patchReviewById);
 
 app.use((err, req, res, next) => {
-  if (err.code === "22P02") {
+  const badRequestCodes = ["22P02", "23502"];
+  if (badRequestCodes.includes(err.code)) {
     res.status(400).send({ msg: "bad request" });
   } else {
     next(err);
