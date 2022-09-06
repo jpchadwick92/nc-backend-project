@@ -1,6 +1,7 @@
 const {
   fetchCategories,
   fetchReviewsById,
+  fetchUsers,
 } = require("../Models/categories.models");
 
 exports.getCategories = (req, res, next) => {
@@ -16,6 +17,14 @@ exports.getReviewsById = (req, res, next) => {
   fetchReviewsById(review_id)
     .then((review) => {
       res.status(200).send({ review });
+    })
+    .catch(next);
+};
+
+exports.getUsers = (req, res, next) => {
+  fetchUsers()
+    .then((users) => {
+      res.status(200).send({ users });
     })
     .catch(next);
 };
