@@ -65,5 +65,13 @@ describe("/api/reviews", () => {
           expect(body.msg).toBe("review does not exist");
         });
     });
+    test("400: invalid review ID", () => {
+      return request(app)
+        .get("/api/reviews/not_an_id")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
   });
 });
