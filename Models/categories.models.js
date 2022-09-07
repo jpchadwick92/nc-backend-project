@@ -19,9 +19,14 @@ exports.fetchReviewsById = (review_id) => {
 };
 
 exports.fetchReviews = () => {
-  return db.query("SELECT * FROM reviews").then(({ rows }) => {
-    return rows;
-  });
+  return db
+    .query(
+      `SELECT * FROM reviews
+      ORDER BY created_at DESC`
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
 };
 
 exports.fetchUsers = () => {

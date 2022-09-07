@@ -60,6 +60,14 @@ describe("/api/reviews", () => {
           });
         });
     });
+    test("200: reviews are ordered by date in descending order by default", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
   });
 });
 
