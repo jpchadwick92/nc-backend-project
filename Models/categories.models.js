@@ -18,6 +18,12 @@ exports.fetchReviewsById = (review_id) => {
     });
 };
 
+exports.fetchReviews = () => {
+  return db.query("SELECT * FROM reviews").then(({ rows }) => {
+    return rows;
+  });
+};
+
 exports.fetchUsers = () => {
   return db.query("SELECT * FROM users;").then(({ rows }) => {
     return rows;
