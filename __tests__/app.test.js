@@ -74,6 +74,71 @@ describe("/api/reviews", () => {
         });
     });
   });
+  describe("PATCH", () => {
+    test("200: updates votes property and responds with updated review", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(incrementVotes)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.review).toEqual(
+            expect.objectContaining({
+              review_id: 1,
+              title: "Agricola",
+              review_body: "Farmyard fun!",
+              designer: "Uwe Rosenberg",
+              review_img_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+              votes: 11,
+              category: "euro game",
+              owner: "mallionaire",
+              created_at: "2021-01-18T10:00:20.514Z",
+            })
+          );
+        });
+    });
+    test("400: invalid value for incrementing votes", () => {
+      const invalidVotes = { inc_votes: "ten" };
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(invalidVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("400: request missing inc_votes property", () => {
+      const missingVotes = {};
+      return request(app)
+        .patch("/api/reviews/1")
+        .send(missingVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: review does not exist", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/1000")
+        .send(incrementVotes)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("review does not exist");
+        });
+    });
+    test("400: invalid review ID", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/not_an_id")
+        .send(incrementVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {

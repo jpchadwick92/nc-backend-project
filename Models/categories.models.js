@@ -23,3 +23,21 @@ exports.fetchUsers = () => {
     return rows;
   });
 };
+
+exports.updateReview = (inc_votes, review_id) => {
+  return db
+    .query(
+      `UPDATE reviews 
+      SET votes = votes + $1 
+      WHERE review_id=$2 
+      RETURNING *`,
+      [inc_votes, review_id]
+    )
+    .then(({ rows }) => {
+      if (!rows[0]) {
+        return Promise.reject({ status: 404, msg: "review does not exist" });
+      } else {
+        return rows[0];
+      }
+    });
+};
