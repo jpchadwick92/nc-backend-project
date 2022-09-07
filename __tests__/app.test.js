@@ -128,6 +128,16 @@ describe("/api/reviews", () => {
           expect(body.msg).toBe("review does not exist");
         });
     });
+    test("400: invalid review ID", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/reviews/not_an_id")
+        .send(incrementVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
   });
 });
 
