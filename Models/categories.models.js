@@ -27,6 +27,31 @@ exports.fetchReviewsById = (review_id) => {
     });
 };
 
+exports.fetchReviews = (category) => {
+  const validCategories = [
+    "euro game",
+    "dexterity",
+    "social deduction",
+    "children's games",
+  ];
+  const queryValues = [];
+  let queryStr = `SELECT * FROM reviews`;
+
+  if (category) {
+    if (!validCategories.includes(category)) {
+      return Promise.reject({ status: 404, msg: `${category} does not exist` });
+    } else {
+      queryValues.push(category);
+      queryStr += ` WHERE category = $1`;
+    }
+  }
+
+  queryStr += ` ORDER BY created_at DESC`;
+  return db.query(queryStr, queryValues).then(({ rows }) => {
+    return rows;
+  });
+};
+
 exports.fetchUsers = () => {
   return db.query("SELECT * FROM users;").then(({ rows }) => {
     return rows;
