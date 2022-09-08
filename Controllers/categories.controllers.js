@@ -23,7 +23,8 @@ exports.getReviewsById = (req, res, next) => {
     .catch(next);
 };
 exports.getReviews = (req, res, next) => {
-  fetchReviews()
+  const { category } = req.query;
+  fetchReviews(category)
     .then((reviews) => {
       res.status(200).send({ reviews });
     })
