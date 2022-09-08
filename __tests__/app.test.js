@@ -31,6 +31,22 @@ describe("/api/categories", () => {
           });
         });
     });
+    test("404: review does not exist", () => {
+      return request(app)
+        .get("/api/reviews/1000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("review does not exist");
+        });
+    });
+    test("400: invalid review ID", () => {
+      return request(app)
+        .get("/api/reviews/not_an_id/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
   });
 });
 
