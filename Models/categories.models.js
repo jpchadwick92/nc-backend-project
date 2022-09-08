@@ -52,6 +52,20 @@ exports.fetchReviews = (category) => {
   });
 };
 
+exports.fetchComments = (review_id) => {
+  return db
+    .query(
+      `SELECT comments.* FROM comments 
+    LEFT JOIN reviews ON comments.review_id = reviews.review_id
+    WHERE comments.review_id=$1
+    GROUP BY comments.comment_id;`,
+      [review_id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.fetchUsers = () => {
   return db.query("SELECT * FROM users;").then(({ rows }) => {
     return rows;
