@@ -43,8 +43,8 @@ describe("/api/reviews", () => {
         .then(({ body }) => {
           expect(Array.isArray(body.reviews)).toBe(true);
           expect(body.reviews.length === 13).toBe(true);
-          body.reviews.forEach((category) => {
-            expect(category).toEqual(
+          body.reviews.forEach((review) => {
+            expect(review).toEqual(
               expect.objectContaining({
                 review_id: expect.any(Number),
                 title: expect.any(String),
