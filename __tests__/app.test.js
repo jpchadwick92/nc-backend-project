@@ -36,6 +36,80 @@ describe("/api/categories", () => {
 
 describe("/api/reviews", () => {
   describe("GET", () => {
+    test("200: responds with an array of review objects", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.reviews)).toBe(true);
+          expect(body.reviews.length === 13).toBe(true);
+          body.reviews.forEach((review) => {
+            expect(review).toEqual(
+              expect.objectContaining({
+                review_id: expect.any(Number),
+                title: expect.any(String),
+                review_body: expect.any(String),
+                designer: expect.any(String),
+                review_img_url: expect.any(String),
+                votes: expect.any(Number),
+                category: expect.any(String),
+                owner: expect.any(String),
+                created_at: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("200: reviews are ordered by date in descending order by default", () => {
+      return request(app)
+        .get("/api/reviews")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("created_at", { descending: true });
+        });
+    });
+    test("200: accepts a category query which filters reviews by specified category", () => {
+      return request(app)
+        .get("/api/reviews?category=euro+game")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toEqual([
+            {
+              review_id: 1,
+              title: "Agricola",
+              review_body: "Farmyard fun!",
+              designer: "Uwe Rosenberg",
+              review_img_url:
+                "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+              votes: 1,
+              category: "euro game",
+              owner: "mallionaire",
+              created_at: "2021-01-18T10:00:20.514Z",
+            },
+          ]);
+        });
+    });
+    test("200: category exists but there are no matching games", () => {
+      return request(app)
+        .get("/api/reviews?category=children's+games")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toEqual([]);
+        });
+    });
+    test("404: category does not exist", () => {
+      return request(app)
+        .get("/api/reviews?category=strategy")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("strategy does not exist");
+        });
+    });
+  });
+});
+
+describe("/api/reviews/:review_id", () => {
+  describe("GET", () => {
     test("200: responds with a review object", () => {
       return request(app)
         .get("/api/reviews/1")
