@@ -121,6 +121,22 @@ describe("/api/reviews", () => {
           expect(body.reviews).toBeSortedBy("created_at");
         });
     });
+    test("400: invalid column for sort_by query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=invalid_column")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("400: invalid order query", () => {
+      return request(app)
+        .get("/api/reviews?order=invalid_order")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
   });
 });
 
