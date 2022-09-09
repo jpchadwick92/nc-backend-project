@@ -62,7 +62,11 @@ exports.fetchComments = (review_id) => {
       [review_id]
     )
     .then(({ rows }) => {
-      return rows;
+      if (!rows[0]) {
+        return Promise.reject({ status: 404, msg: "review does not exist" });
+      } else {
+        return rows;
+      }
     });
 };
 
