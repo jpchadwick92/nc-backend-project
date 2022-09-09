@@ -285,6 +285,81 @@ describe("/api/reviews/:review_id/comments", () => {
         });
     });
   });
+  describe("POST", () => {
+    test("201: posts a new comment and responds with the posted comment", () => {
+      const newComment = {
+        username: "mallionaire",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              author: "mallionaire",
+              body: "This is a new comment",
+              comment_id: 7,
+              created_at: expect.any(String),
+              review_id: 1,
+              votes: 0,
+            })
+          );
+        });
+    });
+    test("400: invalid request body", () => {
+      const invalidComment = {
+        username: "mallionaire",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(invalidComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: review does not exist", () => {
+      const newComment = {
+        username: "mallionaire",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/1000/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("review does not exist");
+        });
+    });
+    test("400: invalid review ID", () => {
+      const newComment = {
+        username: "mallionaire",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/not_an_id/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: username not found", () => {
+      const newComment = {
+        username: "not_a_username",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("username does not exist");
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {
