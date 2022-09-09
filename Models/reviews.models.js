@@ -43,7 +43,6 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
           validCategories.push(row.slug);
         }
       });
-      console.log(validCategories);
     })
     .then(() => {
       let queryStr = `SELECT * FROM reviews`;
