@@ -285,6 +285,30 @@ describe("/api/reviews/:review_id/comments", () => {
         });
     });
   });
+  describe("POST", () => {
+    test("201: posts a new comment and responds with the posted comment", () => {
+      const newComment = {
+        username: "mallionaire",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              author: "mallionaire",
+              body: "This is a new comment",
+              comment_id: 7,
+              created_at: expect.any(String),
+              review_id: 1,
+              votes: 0,
+            })
+          );
+        });
+    });
+  });
 });
 
 describe("/api/users", () => {
