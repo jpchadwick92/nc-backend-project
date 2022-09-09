@@ -102,16 +102,28 @@ exports.updateReview = (inc_votes, review_id) => {
 };
 
 exports.addComment = (body, username, review_id) => {
+  if (isNaN(review_id)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
   return db
-    .query(
-      `
-  INSERT INTO comments
-  (body, author, review_id)
-  VALUES 
-  ($1, $2, $3)
-  RETURNING *`,
-      [body, username, review_id]
-    )
+    .query(`SELECT * FROM reviews;`)
+    .then(({ rows }) => {
+      const existingReviewIDs = rows.map((row) => row.review_id);
+      if (!existingReviewIDs.includes(+review_id)) {
+        return Promise.reject({ status: 404, msg: "review does not exist" });
+      }
+    })
+    .then(() => {
+      return db.query(
+        `
+    INSERT INTO comments
+    (body, author, review_id)
+    VALUES 
+    ($1, $2, $3)
+    RETURNING *`,
+        [body, username, review_id]
+      );
+    })
     .then(({ rows }) => {
       return rows[0];
     });

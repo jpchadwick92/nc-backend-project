@@ -308,6 +308,44 @@ describe("/api/reviews/:review_id/comments", () => {
           );
         });
     });
+    test("400: invalid request body", () => {
+      const invalidComment = {
+        username: "mallionaire",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(invalidComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: review does not exist", () => {
+      const newComment = {
+        username: "mallionaire",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/1000/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("review does not exist");
+        });
+    });
+    test("400: invalid review ID", () => {
+      const newComment = {
+        username: "mallionaire",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/not_an_id/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
   });
 });
 
