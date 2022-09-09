@@ -52,6 +52,31 @@ exports.fetchReviews = (category) => {
   });
 };
 
+exports.fetchComments = (review_id) => {
+  if (isNaN(review_id)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+  return db
+    .query(`SELECT * FROM reviews;`)
+    .then(({ rows }) => {
+      const existingReviewIDs = rows.map((row) => row.review_id);
+      if (!existingReviewIDs.includes(+review_id)) {
+        return Promise.reject({ status: 404, msg: "review does not exist" });
+      }
+    })
+    .then(() => {
+      return db.query(
+        `
+      SELECT * FROM comments
+      WHERE comments.review_id = $1`,
+        [review_id]
+      );
+    })
+    .then(({ rows }) => {
+      return rows;
+    });
+};
+
 exports.fetchUsers = () => {
   return db.query("SELECT * FROM users;").then(({ rows }) => {
     return rows;

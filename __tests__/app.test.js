@@ -237,6 +237,56 @@ describe("/api/reviews/:review_id", () => {
   });
 });
 
+describe("/api/reviews/:review_id/comments", () => {
+  describe("GET", () => {
+    test("200: responds with an array of comments for the given review_id", () => {
+      return request(app)
+        .get("/api/reviews/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(Array.isArray(body.comments)).toBe(true);
+          expect(body.comments.length === 3).toBe(true);
+          body.comments.forEach((comment) => {
+            expect(comment).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                review_id: expect.any(Number),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                author: expect.any(String),
+                created_at: expect.any(String),
+              })
+            );
+          });
+        });
+    });
+    test("200: review exists but there are no comments", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
+        });
+    });
+    test("404: review does not exist", () => {
+      return request(app)
+        .get("/api/reviews/1000/comments")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("review does not exist");
+        });
+    });
+    test("400: invalid review ID", () => {
+      return request(app)
+        .get("/api/reviews/not_an_id/comments")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+  });
+});
+
 describe("/api/users", () => {
   describe("GET", () => {
     test("200: responds with an array of user objects", () => {
