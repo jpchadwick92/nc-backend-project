@@ -20,16 +20,34 @@ exports.fetchReviewsById = (review_id) => {
     });
 };
 
-exports.fetchReviews = (category) => {
+exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
   const validCategories = [
     "euro game",
     "dexterity",
     "social deduction",
     "children's games",
   ];
+  const validColumns = [
+    "review_id",
+    "category",
+    "title",
+    "designer",
+    "owner",
+    "review_body",
+    "review_img_url",
+    "created_at",
+    "votes",
+  ];
+  const validOrder = ["ASC", "DESC"];
+
   const queryValues = [];
   let queryStr = `SELECT * FROM reviews`;
-
+  if (!validColumns.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: `bad request` });
+  }
+  if (!validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
   if (category) {
     if (!validCategories.includes(category)) {
       return Promise.reject({ status: 404, msg: `${category} does not exist` });
@@ -39,7 +57,8 @@ exports.fetchReviews = (category) => {
     }
   }
 
-  queryStr += ` ORDER BY created_at DESC`;
+  queryStr += ` ORDER BY ${sort_by} ${order}`;
+
   return db.query(queryStr, queryValues).then(({ rows }) => {
     return rows;
   });

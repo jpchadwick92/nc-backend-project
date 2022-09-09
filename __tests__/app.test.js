@@ -105,6 +105,38 @@ describe("/api/reviews", () => {
           expect(body.msg).toBe("strategy does not exist");
         });
     });
+    test("200: accepts a sort_by query which sorts reviews by specified column", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=review_id")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("review_id", { descending: true });
+        });
+    });
+    test("200: accepts an order query which specifies sort order", () => {
+      return request(app)
+        .get("/api/reviews?order=ASC")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews).toBeSortedBy("created_at");
+        });
+    });
+    test("400: invalid column for sort_by query", () => {
+      return request(app)
+        .get("/api/reviews?sort_by=invalid_column")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("400: invalid order query", () => {
+      return request(app)
+        .get("/api/reviews?order=invalid_order")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
   });
 });
 
