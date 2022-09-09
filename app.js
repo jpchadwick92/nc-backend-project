@@ -1,13 +1,15 @@
 const express = require("express");
+const { getCategories } = require("./Controllers/categories.controllers");
 const {
-  getCategories,
   getReviewsById,
-  getUsers,
   patchReviewById,
   getReviews,
+} = require("./Controllers/reviews.controllers");
+const { getUsers } = require("./Controllers/users.controllers");
+const {
   getComments,
   postComment,
-} = require("./Controllers/categories.controllers");
+} = require("./Controllers/comments.controllers");
 const app = express();
 app.use(express.json());
 
