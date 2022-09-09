@@ -260,6 +260,14 @@ describe("/api/reviews/:review_id/comments", () => {
           });
         });
     });
+    test("200: review exists but there are no comments", () => {
+      return request(app)
+        .get("/api/reviews/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comments).toEqual([]);
+        });
+    });
     test("404: review does not exist", () => {
       return request(app)
         .get("/api/reviews/1000/comments")
