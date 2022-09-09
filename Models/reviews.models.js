@@ -21,12 +21,6 @@ exports.fetchReviewsById = (review_id) => {
 };
 
 exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
-  const validCategories = [
-    "euro game",
-    "dexterity",
-    "social deduction",
-    "children's games",
-  ];
   const validColumns = [
     "review_id",
     "category",
@@ -39,29 +33,45 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
     "votes",
   ];
   const validOrder = ["ASC", "DESC"];
-
   const queryValues = [];
-  let queryStr = `SELECT * FROM reviews`;
-  if (!validColumns.includes(sort_by)) {
-    return Promise.reject({ status: 400, msg: `bad request` });
-  }
-  if (!validOrder.includes(order)) {
-    return Promise.reject({ status: 400, msg: "bad request" });
-  }
-  if (category) {
-    if (!validCategories.includes(category)) {
-      return Promise.reject({ status: 404, msg: `${category} does not exist` });
-    } else {
-      queryValues.push(category);
-      queryStr += ` WHERE category = $1`;
-    }
-  }
+  let validCategories = [];
+  return db
+    .query("SELECT * FROM categories")
+    .then(({ rows }) => {
+      rows.forEach((row) => {
+        if (!validCategories.includes(row.slug)) {
+          validCategories.push(row.slug);
+        }
+      });
+      console.log(validCategories);
+    })
+    .then(() => {
+      let queryStr = `SELECT * FROM reviews`;
+      if (!validColumns.includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: `bad request` });
+      }
+      if (!validOrder.includes(order)) {
+        return Promise.reject({ status: 400, msg: "bad request" });
+      }
+      if (category) {
+        if (!validCategories.includes(category)) {
+          return Promise.reject({
+            status: 404,
+            msg: `${category} does not exist`,
+          });
+        } else {
+          queryValues.push(category);
+          queryStr += ` WHERE category = $1`;
+        }
+      }
 
-  queryStr += ` ORDER BY ${sort_by} ${order}`;
+      queryStr += ` ORDER BY ${sort_by} ${order}`;
 
-  return db.query(queryStr, queryValues).then(({ rows }) => {
-    return rows;
-  });
+      return db.query(queryStr, queryValues);
+    })
+    .then(({ rows }) => {
+      return rows;
+    });
 };
 
 exports.updateReview = (inc_votes, review_id) => {
