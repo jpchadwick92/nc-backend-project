@@ -38,13 +38,22 @@ exports.addComment = (body, username, review_id) => {
       }
     })
     .then(() => {
+      return db.query(`SELECT * FROM users;`);
+    })
+    .then(({ rows }) => {
+      const existingUsers = rows.map((row) => row.username);
+      if (!existingUsers.includes(username)) {
+        return Promise.reject({ status: 404, msg: "username does not exist" });
+      }
+    })
+    .then(() => {
       return db.query(
         `
-    INSERT INTO comments
-    (body, author, review_id)
-    VALUES 
-    ($1, $2, $3)
-    RETURNING *`,
+      INSERT INTO comments
+      (body, author, review_id)
+      VALUES 
+      ($1, $2, $3)
+      RETURNING *`,
         [body, username, review_id]
       );
     })

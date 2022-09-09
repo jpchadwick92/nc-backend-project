@@ -346,6 +346,19 @@ describe("/api/reviews/:review_id/comments", () => {
           expect(body.msg).toBe("bad request");
         });
     });
+    test("404: username not found", () => {
+      const newComment = {
+        username: "not_a_username",
+        body: "This is a new comment",
+      };
+      return request(app)
+        .post("/api/reviews/1/comments")
+        .send(newComment)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("username does not exist");
+        });
+    });
   });
 });
 
