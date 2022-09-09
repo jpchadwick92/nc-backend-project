@@ -431,5 +431,21 @@ describe("/api/comments/:comment_id", () => {
           expect(rows.length).toBe(0);
         });
     });
+    test("400: invalid comment_id", () => {
+      return request(app)
+        .delete("/api/comments/one")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: comment does not exist", () => {
+      return request(app)
+        .delete("/api/comments/1000")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("comment does not exist");
+        });
+    });
   });
 });
