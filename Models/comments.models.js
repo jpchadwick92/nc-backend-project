@@ -61,3 +61,25 @@ exports.addComment = (body, username, review_id) => {
       return rows[0];
     });
 };
+
+exports.removeComment = (comment_id) => {
+  if (isNaN(comment_id)) {
+    return Promise.reject({ status: 400, msg: "bad request" });
+  }
+  return db
+    .query(`SELECT * FROM comments;`)
+    .then(({ rows }) => {
+      const existingCommentIDs = rows.map((row) => row.comment_id);
+      if (!existingCommentIDs.includes(+comment_id)) {
+        return Promise.reject({ status: 404, msg: "comment does not exist" });
+      }
+    })
+    .then(() => {
+      return db.query(
+        `
+    DELETE FROM comments
+    WHERE comment_id = $1`,
+        [comment_id]
+      );
+    });
+};
