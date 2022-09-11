@@ -12,6 +12,30 @@ afterAll(() => {
   return db.end();
 });
 
+describe("/api", () => {
+  describe("GET", () => {
+    test("200: responds with JSON describing all available endpoints", () => {
+      request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).toEqual(
+            expect.objectContaining({
+              "GET /api": expect.any(Object),
+              "GET /api/categories": expect.any(Object),
+              "GET /api/reviews": expect.any(Object),
+              "GET /api/reviews/:review_id": expect.any(Object),
+              "PATCH /api/reviews/:review_id": expect.any(Object),
+              "GET /api/reviews/:review_id/comments": expect.any(Object),
+              "POST /api/reviews/:review_id/comments": expect.any(Object),
+              "GET /api/users": expect.any(Object),
+              "DELETE /api/comments/:comment_id": expect.any(Object),
+            })
+          );
+        });
+    });
+  });
+});
 describe("/api/categories", () => {
   describe("GET", () => {
     test("200: responds with an array of category objects", () => {
