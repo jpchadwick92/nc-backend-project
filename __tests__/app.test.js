@@ -440,7 +440,25 @@ describe("/api/users", () => {
     });
   });
 });
-
+describe("/api/users/:username", () => {
+  describe("GET", () => {
+    test("200: responds with user object", () => {
+      return request(app)
+        .get("/api/users/mallionaire")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.user).toEqual(
+            expect.objectContaining({
+              username: "mallionaire",
+              name: "haz",
+              avatar_url:
+                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+            })
+          );
+        });
+    });
+  });
+});
 describe("/api/comments/:comment_id", () => {
   describe("DELETE", () => {
     test("204: deletes comment by comment_id", () => {
