@@ -457,6 +457,14 @@ describe("/api/users/:username", () => {
           );
         });
     });
+    test("404: user does not exist", () => {
+      return request(app)
+        .get("/api/users/not_a_user")
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("user does not exist");
+        });
+    });
   });
 });
 describe("/api/comments/:comment_id", () => {
