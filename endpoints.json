@@ -52,6 +52,7 @@
   "PATCH /api/reviews/:review_id": {
     "description": "serves a review object with vote property incremented by given patch object value",
     "queries": [],
+    "exampleRequest": { "inc_votes": 1 },
     "exampleResponse": {
       "review": {
         "review_id": 1,
@@ -85,6 +86,10 @@
   "POST /api/reviews/:review_id/comments": {
     "description": "serves a new comment to a review with given review id",
     "queries": [],
+    "exampleRequest": {
+      "username": "mallionaire",
+      "body": "This is a new comment"
+    },
     "exampleResponse": {
       "comment": [
         {
