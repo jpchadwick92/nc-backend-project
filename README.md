@@ -2,11 +2,11 @@
 
 ## Summary
 
-This is a backend API which provides data from the Northcoders Games database, a PSQL database which is accessed via the provided endpoints and methods.
+This is a backend API which provides data from the Northcoders Games database, a PSQL database containing data on users, categories, reviews and comments. These can be accessed via the provided endpoints and appropriate GET, PATCH, POST and DELETE methods.
 
 ## The hosted version of this api can be found here:
 
-https://northcoders-games-project.herokuapp.com/
+https://northcoders-games-project.herokuapp.com/api
 
 ## Setup
 
@@ -52,7 +52,7 @@ npm run seed
 npm start
 ```
 
-7. To run the tests use
+7. Tests can be found in the `__tests__/app.test.js ` directory. To run the tests use
 
 ```
 npm test
