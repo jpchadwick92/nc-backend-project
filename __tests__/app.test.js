@@ -79,6 +79,7 @@ describe("/api/reviews", () => {
                 category: expect.any(String),
                 owner: expect.any(String),
                 created_at: expect.any(String),
+                comment_count: expect.any(Number),
               })
             );
           });
@@ -109,6 +110,7 @@ describe("/api/reviews", () => {
               category: "euro game",
               owner: "mallionaire",
               created_at: "2021-01-18T10:00:20.514Z",
+              comment_count: 0,
             },
           ]);
         });
@@ -131,10 +133,12 @@ describe("/api/reviews", () => {
     });
     test("200: accepts a sort_by query which sorts reviews by specified column", () => {
       return request(app)
-        .get("/api/reviews?sort_by=review_id")
+        .get("/api/reviews?sort_by=comment_count")
         .expect(200)
         .then(({ body }) => {
-          expect(body.reviews).toBeSortedBy("review_id", { descending: true });
+          expect(body.reviews).toBeSortedBy("comment_count", {
+            descending: true,
+          });
         });
     });
     test("200: accepts an order query which specifies sort order", () => {

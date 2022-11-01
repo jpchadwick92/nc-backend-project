@@ -31,6 +31,7 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
     "review_img_url",
     "created_at",
     "votes",
+    "comment_count",
   ];
   const validOrder = ["ASC", "DESC"];
   const queryValues = [];
@@ -45,7 +46,11 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
       });
     })
     .then(() => {
-      let queryStr = `SELECT * FROM reviews`;
+      let queryStr = `
+      SELECT reviews.*, COUNT(comments.review_id)::INT AS comment_count
+      FROM reviews
+      LEFT JOIN comments ON reviews.review_id = comments.review_id`;
+
       if (!validColumns.includes(sort_by)) {
         return Promise.reject({ status: 400, msg: `bad request` });
       }
@@ -64,7 +69,9 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
         }
       }
 
-      queryStr += ` ORDER BY ${sort_by} ${order}`;
+      queryStr += ` 
+      GROUP BY reviews.review_id
+      ORDER BY ${sort_by} ${order}`;
 
       return db.query(queryStr, queryValues);
     })
