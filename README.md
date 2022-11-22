@@ -6,7 +6,7 @@ This is a backend API which provides data from the Northcoders Games database, a
 
 ## The hosted version of this api can be found here:
 
-https://northcoders-games-project.herokuapp.com/api
+https://nc-backend-project.cyclic.app/api
 
 ## Setup
 
