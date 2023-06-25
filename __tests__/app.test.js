@@ -502,4 +502,25 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
+  describe("PATCH", () => {
+    test("200: updates votes property and responds with updated comment", () => {
+      const incrementVotes = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(incrementVotes)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: "I loved this game too!",
+              votes: 15,
+              author: "bainesface",
+              review_id: 2,
+              created_at: "2017-11-22T12:43:33.389Z",
+            })
+          );
+        });
+    });
+  });
 });
