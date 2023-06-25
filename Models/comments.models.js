@@ -94,6 +94,10 @@ exports.updateComment = (inc_votes, comment_id) => {
       [inc_votes, comment_id]
     )
     .then(({ rows }) => {
-      return rows[0];
+      if (!rows[0]) {
+        return Promise.reject({ status: 404, msg: "comment does not exist" });
+      } else {
+        return rows[0];
+      }
     });
 };
