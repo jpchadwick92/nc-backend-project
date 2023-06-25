@@ -502,4 +502,65 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
+  describe.only("PATCH", () => {
+    test("200: updates votes property and responds with updated comment", () => {
+      const incrementVotes = { inc_votes: -1 };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(incrementVotes)
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: 1,
+              body: "I loved this game too!",
+              votes: 15,
+              author: "bainesface",
+              review_id: 2,
+              created_at: "2017-11-22T12:43:33.389Z",
+            })
+          );
+        });
+    });
+    test("400: invalid value for incrementing votes", () => {
+      const invalidVotes = { inc_votes: "ten" };
+      return request(app)
+        .patch("/api/comments/1")
+        .send(invalidVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("400: request missing inc_votes property", () => {
+      const missingVotes = {};
+      return request(app)
+        .patch("/api/comments/1")
+        .send(missingVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: comment does not exist", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/comments/1000")
+        .send(incrementVotes)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("comment does not exist");
+        });
+    });
+    test("400: invalid comment ID", () => {
+      const incrementVotes = { inc_votes: 10 };
+      return request(app)
+        .patch("/api/comments/not_an_id")
+        .send(incrementVotes)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+  });
 });
