@@ -97,3 +97,30 @@ exports.updateReview = (inc_votes, review_id) => {
       }
     });
 };
+
+exports.addReview = (review_body, owner, title, category, designer) => {
+  return db
+    .query(
+      `
+    INSERT INTO reviews
+    (review_body, owner, title, category, designer)
+    VALUES
+    ($1, $2, $3, $4, $5)
+    RETURNING *;`,
+      [review_body, owner, title, category, designer]
+    )
+    .then(({ rows }) => {
+      return db.query(
+        `
+      SELECT reviews.*, COUNT(comments.review_id)::INT AS comment_count
+      FROM reviews
+      LEFT JOIN comments ON reviews.review_id = comments.review_id
+      WHERE reviews.review_id = $1
+      GROUP BY reviews.review_id`,
+        [rows[0].review_id]
+      );
+    })
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
