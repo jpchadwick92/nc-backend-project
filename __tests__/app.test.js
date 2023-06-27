@@ -166,7 +166,7 @@ describe("/api/reviews", () => {
         });
     });
   });
-  describe("POST", () => {
+  describe.only("POST", () => {
     test("201: posts a new review and responds with the posted review", () => {
       const newReview = {
         owner: "mallionaire",
@@ -193,6 +193,53 @@ describe("/api/reviews", () => {
             review_img_url:
               "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
           });
+        });
+    });
+    test("400: request body missing info", () => {
+      const invalidReview = {
+        owner: "mallionaire",
+        review_body: "This is a new review",
+        designer: "new designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(invalidReview)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: user does not exist", () => {
+      const newReview = {
+        owner: "not as real user",
+        review_body: "This is a new review",
+        title: "New game",
+        designer: "new designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(newReview)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("user does not exist");
+        });
+    });
+    test("404: category does not exist", () => {
+      const newReview = {
+        owner: "mallionaire",
+        review_body: "This is a new review",
+        title: "New game",
+        designer: "new designer",
+        category: "not a category",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(newReview)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("category does not exist");
         });
     });
   });

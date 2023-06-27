@@ -100,15 +100,33 @@ exports.updateReview = (inc_votes, review_id) => {
 
 exports.addReview = (review_body, owner, title, category, designer) => {
   return db
-    .query(
-      `
+    .query(`SELECT * FROM users;`)
+    .then(({ rows }) => {
+      const existingUsers = rows.map((row) => row.username);
+      if (!existingUsers.includes(owner)) {
+        return Promise.reject({ status: 404, msg: "user does not exist" });
+      }
+    })
+    .then(() => {
+      return db.query(`SELECT * FROM categories;`);
+    })
+    .then(({ rows }) => {
+      const existingCategories = rows.map((row) => row.slug);
+      if (!existingCategories.includes(category)) {
+        return Promise.reject({ status: 404, msg: "category does not exist" });
+      }
+    })
+    .then(() => {
+      return db.query(
+        `
     INSERT INTO reviews
     (review_body, owner, title, category, designer)
     VALUES
     ($1, $2, $3, $4, $5)
     RETURNING *;`,
-      [review_body, owner, title, category, designer]
-    )
+        [review_body, owner, title, category, designer]
+      );
+    })
     .then(({ rows }) => {
       return db.query(
         `
