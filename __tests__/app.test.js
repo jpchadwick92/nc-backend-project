@@ -166,6 +166,83 @@ describe("/api/reviews", () => {
         });
     });
   });
+  describe.only("POST", () => {
+    test("201: posts a new review and responds with the posted review", () => {
+      const newReview = {
+        owner: "mallionaire",
+        review_body: "This is a new review",
+        title: "New game",
+        designer: "new designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(newReview)
+        .expect(201)
+        .then(({ body }) => {
+          expect(body.review).toMatchObject({
+            owner: "mallionaire",
+            review_body: "This is a new review",
+            review_id: 14,
+            created_at: expect.any(String),
+            title: "New game",
+            designer: "new designer",
+            category: "dexterity",
+            votes: 0,
+            comment_count: 0,
+            review_img_url:
+              "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg",
+          });
+        });
+    });
+    test("400: request body missing info", () => {
+      const invalidReview = {
+        owner: "mallionaire",
+        review_body: "This is a new review",
+        designer: "new designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(invalidReview)
+        .expect(400)
+        .then(({ body }) => {
+          expect(body.msg).toBe("bad request");
+        });
+    });
+    test("404: user does not exist", () => {
+      const newReview = {
+        owner: "not as real user",
+        review_body: "This is a new review",
+        title: "New game",
+        designer: "new designer",
+        category: "dexterity",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(newReview)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("user does not exist");
+        });
+    });
+    test("404: category does not exist", () => {
+      const newReview = {
+        owner: "mallionaire",
+        review_body: "This is a new review",
+        title: "New game",
+        designer: "new designer",
+        category: "not a category",
+      };
+      return request(app)
+        .post("/api/reviews")
+        .send(newReview)
+        .expect(404)
+        .then(({ body }) => {
+          expect(body.msg).toBe("category does not exist");
+        });
+    });
+  });
 });
 
 describe("/api/reviews/:review_id", () => {
@@ -502,7 +579,7 @@ describe("/api/comments/:comment_id", () => {
         });
     });
   });
-  describe.only("PATCH", () => {
+  describe("PATCH", () => {
     test("200: updates votes property and responds with updated comment", () => {
       const incrementVotes = { inc_votes: -1 };
       return request(app)
