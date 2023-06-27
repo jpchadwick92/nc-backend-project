@@ -66,7 +66,7 @@ describe("/api/reviews", () => {
         .expect(200)
         .then(({ body }) => {
           expect(Array.isArray(body.reviews)).toBe(true);
-          expect(body.reviews.length === 13).toBe(true);
+          expect(body.reviews.length === 10).toBe(true);
           body.reviews.forEach((review) => {
             expect(review).toEqual(
               expect.objectContaining({
@@ -166,7 +166,7 @@ describe("/api/reviews", () => {
         });
     });
   });
-  describe.only("POST", () => {
+  describe("POST", () => {
     test("201: posts a new review and responds with the posted review", () => {
       const newReview = {
         owner: "mallionaire",
@@ -240,6 +240,16 @@ describe("/api/reviews", () => {
         .expect(404)
         .then(({ body }) => {
           expect(body.msg).toBe("category does not exist");
+        });
+    });
+  });
+  describe("GET (pagination)", () => {
+    test("200: accepts a limit query which limits number of reviews displayed", () => {
+      return request(app)
+        .get("/api/reviews?limit=8")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.reviews.length).toBe(8);
         });
     });
   });

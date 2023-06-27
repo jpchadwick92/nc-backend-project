@@ -20,7 +20,13 @@ exports.fetchReviewsById = (review_id) => {
     });
 };
 
-exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
+exports.fetchReviews = (
+  category,
+  sort_by = "created_at",
+  order = "DESC",
+  limit = 10,
+  p = 1
+) => {
   const validColumns = [
     "review_id",
     "category",
@@ -71,7 +77,9 @@ exports.fetchReviews = (category, sort_by = "created_at", order = "DESC") => {
 
       queryStr += ` 
       GROUP BY reviews.review_id
-      ORDER BY ${sort_by} ${order}`;
+      ORDER BY ${sort_by} ${order}
+      LIMIT ${limit}
+      OFFSET ${(p - 1) * limit}`;
 
       return db.query(queryStr, queryValues);
     })
